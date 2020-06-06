@@ -3,9 +3,9 @@
 
 #include "cocos2d.h"
 #include <string>
+#include "ChessScene/Pieces/ChessPiece.h"
 
-class ChessPiece;
-struct RowCol;
+struct Rowcol;
 
 constexpr int MAX_ROWCOLS = 8;
 constexpr int PIXEL_MARGIN = 16;
@@ -18,13 +18,25 @@ private:
 	cocos2d::Point _endPoint;
 	float _pixelMargin;
 	float _pixelInterval;
+private:
+	cocos2d::Size initBoardSprite();
 public:
 	void initLayer();
-	cocos2d::Size initBoard();
+	void initBoard();
 	void initBoardSize(cocos2d::Size baseSize);
 
-	inline bool isValidPos(cocos2d::Point pos);
-	RowCol pointToRowcol(cocos2d::Point pos);
+	ChessPiece* getChessPiece(const Rowcol& rowcol);
+	ChessPiece* getChessPiece(const int& row, const int& column);
+
+	void moveChessPiece(ChessPiece* piece, const Rowcol prev, const Rowcol next);
+	void createPiece(Rowcol rowcol, ChessPiece::PieceType type, ChessPiece::Color color);
+
+	bool isValidPos(const cocos2d::Point& pos);
+	bool isValidRowcol(const int& row, const int& column);
+	bool isValidRowcol(const Rowcol& rowcol);
+	
+	Rowcol pointToRowcol(cocos2d::Point pos);
+	cocos2d::Point rowcolToPoint(Rowcol rowcol);
 public:
 	BoardLayer();
 	virtual ~BoardLayer();

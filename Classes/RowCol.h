@@ -1,15 +1,17 @@
 #ifndef __ROW_COL_H__
 #define __ROW_COL_H__
 
-struct RowCol {
+struct Rowcol {
 public:
-	static RowCol IMPOSSIBLE;
+	static Rowcol IMPOSSIBLE;
 	int row;
 	int column;
 public:
-	RowCol(int r, int c);
-	bool operator==(const RowCol& other);
-	bool operator!=(const RowCol& other);
+	Rowcol();
+	Rowcol(int r, int c);
+	bool operator==(const Rowcol& other) const;
+	bool operator!=(const Rowcol& other) const;
+	Rowcol& operator+(const Rowcol& other) const;
 };
 
 

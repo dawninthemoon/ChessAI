@@ -150,8 +150,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\ChessScene\BoardLayer.cpp" />
-    <ClCompile Include="..\Classes\ChessScene\ChessPiece.cpp" />
     <ClCompile Include="..\Classes\ChessScene\ChessScene.cpp" />
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessPawn.cpp" />
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessPiece.cpp" />
     <ClCompile Include="..\Classes\ChessScene\TimerLayer.cpp" />
     <ClCompile Include="..\Classes\ChessScene\UILayer.cpp" />
     <ClCompile Include="..\Classes\ChessUtility.cpp" />
@@ -161,8 +162,10 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\ChessScene\BoardLayer.h" />
-    <ClInclude Include="..\Classes\ChessScene\ChessPiece.h" />
     <ClInclude Include="..\Classes\ChessScene\ChessScene.h" />
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessPawn.h" />
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessPiece.h" />
+    <ClInclude Include="..\Classes\ChessScene\Pieces\Pieces.h" />
     <ClInclude Include="..\Classes\ChessScene\TimerLayer.h" />
     <ClInclude Include="..\Classes\ChessScene\UILayer.h" />
     <ClInclude Include="..\Classes\ChessUtility.h" />

@@ -13,15 +13,15 @@
     <Filter Include="src\ChessScene">
       <UniqueIdentifier>{c0291b2d-cbfb-48c6-b17f-e7b131c6d18f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ChessScene\Picecs">
+      <UniqueIdentifier>{e86040b3-7f42-4b8c-b424-97f4f5395135}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>win32</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\ChessScene\BoardLayer.cpp">
-      <Filter>src\ChessScene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\ChessScene\ChessPiece.cpp">
       <Filter>src\ChessScene</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\ChessScene\ChessScene.cpp">
@@ -42,15 +42,18 @@
     <ClCompile Include="..\Classes\RowCol.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessPawn.cpp">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessPiece.cpp">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\ChessScene\BoardLayer.h">
-      <Filter>src\ChessScene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\ChessScene\ChessPiece.h">
       <Filter>src\ChessScene</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\ChessScene\ChessScene.h">
@@ -70,6 +73,15 @@
     </ClInclude>
     <ClInclude Include="..\Classes\RowCol.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessPawn.h">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessPiece.h">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Pieces\Pieces.h">
+      <Filter>src\ChessScene\Picecs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,9 @@ TimerLayer::TimerLayer() { }
 TimerLayer::~TimerLayer() { }
 
 bool TimerLayer::init() {
-	if (!Layer::create()) return false;
+	if (!Layer::init()) return false;
+
+	initLayer();
 
 	return true;
 }

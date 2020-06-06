@@ -3,8 +3,8 @@
 #include "ChessScene/BoardLayer.h"
 #include "ChessScene/TimerLayer.h"
 #include "SimpleAudioEngine.h"
-#include "Rowcol.h"
 #include "ChessUtility.h"
+#include "ChessScene/Pieces/Pieces.h"
 
 USING_NS_CC;
 
@@ -17,6 +17,7 @@ bool ChessScene::init()
 {
 	if (!Scene::init()) return false;
 
+	_selectedRowcol = Rowcol::IMPOSSIBLE;
 	do {
 		CC_BREAK_IF(!initLayers());
 		CC_BREAK_IF(!initTouchListeners());
@@ -64,13 +65,47 @@ void ChessScene::onTouchMoved(Touch* touch, Event* event) {
 }
 
 void ChessScene::onTouchEnded(Touch* touch, Event* event) {
-	try {
-		Point touchPosition = touch->getLocation();
+	Point touchPosition = touch->getLocation();
+	Rowcol rowcol = _boardLayer->pointToRowcol(touchPosition);
 
-		RowCol rowcol = _boardLayer->pointToRowcol(touchPosition);
-		log("(%d, %d)", rowcol.row, rowcol.column);
+	if (_boardLayer->isValidRowcol(rowcol)) {
+		if (_selectedRowcol != Rowcol::IMPOSSIBLE) {
+			if (!tryMovePiece(rowcol) && _boardLayer->getChessPiece(rowcol)) {
+				showPossibleRowcols(rowcol);
+			}
+		}
+		else if (_boardLayer->getChessPiece(rowcol)) {
+			showPossibleRowcols(rowcol);
+		}
 	}
-	catch (int e) {
+	else {
+		_selectedRowcol = Rowcol::IMPOSSIBLE;
+		_possibleRowcols.clear();
+	}
+}
 
+void ChessScene::showPossibleRowcols(const Rowcol& rowcol) {
+	_selectedRowcol = rowcol;
+
+	ChessPiece* selectedPiece = _boardLayer->getChessPiece(rowcol);
+	_possibleRowcols = selectedPiece->getMoveAreas(_boardLayer, rowcol);
+	
+	for (const auto& rc : _possibleRowcols) {
+		Point pos = _boardLayer->rowcolToPoint(rc);
 	}
+}
+
+bool ChessScene::tryMovePiece(const Rowcol& next) {
+	bool bRet = false;
+	for (const auto& rc : _possibleRowcols) {
+		if (next == rc) {
+			bRet = true;
+			ChessPiece* selectedPiece = _boardLayer->getChessPiece(_selectedRowcol);
+			_boardLayer->moveChessPiece(selectedPiece, _selectedRowcol, next);
+			
+			_selectedRowcol = Rowcol::IMPOSSIBLE;
+			break;
+		}
+	}
+	return bRet;
 }

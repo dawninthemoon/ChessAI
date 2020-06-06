@@ -1,13 +1,21 @@
 #include "RowCol.h"
 
-RowCol RowCol::IMPOSSIBLE = RowCol(-1, -1);
+Rowcol Rowcol::IMPOSSIBLE = Rowcol(-1, -1);
 
-RowCol::RowCol(int r, int c) : row(r), column(c) { }
+Rowcol::Rowcol() : row(0), column(0) { }
+Rowcol::Rowcol(int r, int c) : row(r), column(c) { }
 
-bool RowCol::operator==(const RowCol& other) {
+bool Rowcol::operator==(const Rowcol& other) const {
 	return (this->row == other.row) && (this->column == other.column);
 }
 
-bool RowCol::operator!=(const RowCol& other) {
+bool Rowcol::operator!=(const Rowcol& other) const {
 	return (this->row != other.row) || (this->column != other.column);
+}
+
+Rowcol& Rowcol::operator+(const Rowcol& other) const {
+	Rowcol newRowcol;
+	newRowcol.row = this->row + other.row;
+	newRowcol.column = this->column + other.column;
+	return newRowcol;
 }
