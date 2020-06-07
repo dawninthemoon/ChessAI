@@ -13,9 +13,17 @@ bool Rowcol::operator!=(const Rowcol& other) const {
 	return (this->row != other.row) || (this->column != other.column);
 }
 
-Rowcol& Rowcol::operator+(const Rowcol& other) const {
+const Rowcol Rowcol::operator+(const Rowcol& other) const {
 	Rowcol newRowcol;
 	newRowcol.row = this->row + other.row;
 	newRowcol.column = this->column + other.column;
+	return newRowcol;
+}
+
+const Rowcol Rowcol::operator*(int scalar) const
+{
+	Rowcol newRowcol;
+	newRowcol.row = row * scalar;
+	newRowcol.column = column * scalar;
 	return newRowcol;
 }

@@ -4,6 +4,7 @@ cocos2d/
 proj.ios_mac/
 proj.android/
 proj.linux/
+*.keystore
 
 # OSX - https://github.com/github/gitignore/blob/master/Global/OSX.gitignore
 .DS_Store
@@ -94,6 +95,9 @@ proj.win32/*.sdf
 proj.win32/*.opensdf
 proj.win32/Debug.*/
 proj.win32/Release.*/
+proj.win32/*.vcxproj
+proj.win32/*.vcxproj.filters
+proj.win32/.vs/*/v14/.suo
 # proj.win8.1-universal
 # others
 # CMake

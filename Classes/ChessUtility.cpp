@@ -1,4 +1,5 @@
 #include "ChessUtility.h"
+#include "ChessScene/Pieces/Pieces.h"
 
 USING_NS_CC;
 
@@ -38,8 +39,14 @@ float ChessUtility::getSpriteScale() {
 	return scale;
 }
 
-cocos2d::Sprite* ChessUtility::createSprite(const std::string name, Node* parent, Point pos, Point anchor) {
+Sprite* ChessUtility::createSprite(const std::string name, Node* parent, Point pos, Point anchor) {
 	Sprite* sprite = Sprite::create(name);
+	initSprite(sprite, parent, pos, anchor);
+	return sprite;
+}
+
+Sprite* ChessUtility::createWithSpriteFrame(const std::string name, Node* parent, Point pos, Point anchor) {
+	Sprite* sprite = Sprite::createWithSpriteFrameName(name);
 	initSprite(sprite, parent, pos, anchor);
 	return sprite;
 }
@@ -52,4 +59,48 @@ void ChessUtility::initSprite(cocos2d::Sprite* sprite, cocos2d::Node* parent, co
 	sprite->setPosition(pos);
 
 	parent->addChild(sprite);
+}
+
+ChessPiece* ChessUtility::createPiece(ChessPiece::PieceType type, ChessPiece::Color color)
+{
+	ChessPiece* piece = nullptr;
+	switch (type) {
+	case ChessPiece::PAWN:
+		piece = ChessPawn::create(type, color);
+		break;
+	case ChessPiece::BISHOP:
+		piece = ChessBishop::create(type, color);
+		break;
+	case ChessPiece::KNIGHT:
+		piece = ChessKnight::create(type, color);
+		break;
+	case ChessPiece::ROOK:
+		piece = ChessRook::create(type, color);
+		break;
+	case ChessPiece::QUEEN:
+		piece = ChessQueen::create(type, color);
+		break;
+	case ChessPiece::KING:
+		piece = ChessKing::create(type, color);
+		break;
+	default:
+		break;
+	}
+	return piece;
+}
+
+int ChessUtility::getPieceValue(ChessPiece* piece, ChessPiece::Color color) {
+	if (piece == nullptr) return 0;
+
+	static int values[ChessPiece::TYPE_COUNT] = {
+		10,
+		30,
+		30,
+		50,
+		90,
+		900
+	};
+
+	int multiplyer = (piece->getPieceColor() == color) ? 1 : -1;
+	return values[piece->getPieceType()] * multiplyer;
 }

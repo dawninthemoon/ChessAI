@@ -11,7 +11,8 @@ public:
 	Rowcol(int r, int c);
 	bool operator==(const Rowcol& other) const;
 	bool operator!=(const Rowcol& other) const;
-	Rowcol& operator+(const Rowcol& other) const;
+	const Rowcol operator+(const Rowcol& other) const;
+	const Rowcol operator*(int scalar) const;
 };
 
 

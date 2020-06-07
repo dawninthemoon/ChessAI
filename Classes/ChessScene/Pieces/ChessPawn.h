@@ -8,7 +8,9 @@ private:
 	bool _isFirstMove;
 public:
 	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, const Rowcol& current) override;
-	Rowcol canAddDiagonalMove(BoardLayer* board, const Rowcol base, Rowcol additonal);
+	virtual Rowcol canAddMove(BoardLayer* board, const Rowcol base, Rowcol additional) override;
+	Rowcol canAddDiagonalMove(BoardLayer* board, const Rowcol base, Rowcol additional);
+	virtual void onMove(const cocos2d::Point point, ChessPiece* toRemove, cocos2d::Node* parent) override;
 public:
 	static ChessPawn* create(const ChessPiece::PieceType type, const ChessPiece::Color color);
 	ChessPawn();

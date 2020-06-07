@@ -4,7 +4,9 @@
 #include "ChessScene/TimerLayer.h"
 #include "SimpleAudioEngine.h"
 #include "ChessUtility.h"
+#include "GameState.h"
 #include "ChessScene/Pieces/Pieces.h"
+#include "ChessScene/Computer.h"
 
 USING_NS_CC;
 
@@ -17,13 +19,24 @@ bool ChessScene::init()
 {
 	if (!Scene::init()) return false;
 
-	_selectedRowcol = Rowcol::IMPOSSIBLE;
+	initData();
 	do {
+		CC_BREAK_IF(!initSpriteFrames());
 		CC_BREAK_IF(!initLayers());
 		CC_BREAK_IF(!initTouchListeners());
 	} while (false);
 
 	return true;
+}
+
+void ChessScene::initData() {
+	_isGameEnd = false;
+	_currentTurn = ChessPiece::WHITE;
+	_selectedPiece = nullptr;
+	_selectedRowcol = Rowcol::IMPOSSIBLE;
+	for (int i = 0; i < ChessPiece::COLOR_COUNT; ++i)
+		_isCheck[i] = false;
+	_computer = new Computer();
 }
 
 bool ChessScene::initLayers() {
@@ -39,6 +52,21 @@ bool ChessScene::initLayers() {
 	if (!_uiLayer) return false;
 	this->addChild(_uiLayer, LayerZOrder::UILayerOrder);
 
+	return true;
+}
+
+bool ChessScene::initSpriteFrames() {
+	auto cache = SpriteFrameCache::getInstance();
+	Rect pieceRect = Rect(0, 0, 32, 32);
+
+	for (int i = 0; i < ChessPiece::COLOR_COUNT; ++i) {
+		for (int j = 0; j < ChessPiece::TYPE_COUNT; ++j) {
+			auto path = ChessUtility::piecePath[i][j];
+			auto sprite = SpriteFrame::create(path, pieceRect);
+			cache->addSpriteFrame(sprite, path);
+			if (!sprite) return false;
+		}
+	}
 	return true;
 }
 
@@ -65,8 +93,13 @@ void ChessScene::onTouchMoved(Touch* touch, Event* event) {
 }
 
 void ChessScene::onTouchEnded(Touch* touch, Event* event) {
+	if (_isGameEnd) return;
+
 	Point touchPosition = touch->getLocation();
 	Rowcol rowcol = _boardLayer->pointToRowcol(touchPosition);
+	
+	auto prev = this->getChildByTag(1);
+	this->removeChild(prev);
 
 	if (_boardLayer->isValidRowcol(rowcol)) {
 		if (_selectedRowcol != Rowcol::IMPOSSIBLE) {
@@ -79,7 +112,9 @@ void ChessScene::onTouchEnded(Touch* touch, Event* event) {
 		}
 	}
 	else {
+		_boardLayer->removeAllPossibleRowcols();
 		_selectedRowcol = Rowcol::IMPOSSIBLE;
+		_selectedPiece = nullptr;
 		_possibleRowcols.clear();
 	}
 }
@@ -87,25 +122,85 @@ void ChessScene::onTouchEnded(Touch* touch, Event* event) {
 void ChessScene::showPossibleRowcols(const Rowcol& rowcol) {
 	_selectedRowcol = rowcol;
 
-	ChessPiece* selectedPiece = _boardLayer->getChessPiece(rowcol);
-	_possibleRowcols = selectedPiece->getMoveAreas(_boardLayer, rowcol);
+	_selectedPiece = _boardLayer->getChessPiece(rowcol);
+	ChessPiece::Color color = _selectedPiece->getPieceColor();
+
+	if (_currentTurn != color) return;
+	
+	_possibleRowcols = _selectedPiece->getMoveAreas(_boardLayer, rowcol);
+
+	ChessPiece::PieceType type = _selectedPiece->getPieceType();
+	std::string path = ChessUtility::piecePath[color][type];
 	
 	for (const auto& rc : _possibleRowcols) {
-		Point pos = _boardLayer->rowcolToPoint(rc);
+		_boardLayer->showPossibleRowcols(rc, path);
 	}
 }
 
 bool ChessScene::tryMovePiece(const Rowcol& next) {
 	bool bRet = false;
+
+	_boardLayer->removeAllPossibleRowcols();
 	for (const auto& rc : _possibleRowcols) {
 		if (next == rc) {
 			bRet = true;
-			ChessPiece* selectedPiece = _boardLayer->getChessPiece(_selectedRowcol);
-			_boardLayer->moveChessPiece(selectedPiece, _selectedRowcol, next);
-			
-			_selectedRowcol = Rowcol::IMPOSSIBLE;
+			movePiece(next);
 			break;
 		}
 	}
+
+	_selectedRowcol = Rowcol::IMPOSSIBLE;
+	_selectedPiece = nullptr;
+
 	return bRet;
+}
+
+void ChessScene::movePiece(const Rowcol& next)
+{
+	try {
+		ChessPiece::Color color = _selectedPiece->getPieceColor();
+		_boardLayer->moveChessPiece(_selectedPiece, _selectedRowcol, next);
+		if (_isCheck[color])
+			throw GameState::DEFEAT;
+		setCheck(false);
+	}
+	catch (GameState e) {
+		switch (e) {
+		case GameState::CHECK:
+			setCheck(true);
+			break;
+		case GameState::CHECKMATE:
+			onCheckmate();
+			break;
+		case GameState::DEFEAT:
+			onCheckmate();
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void ChessScene::setCheck(bool check) {
+	auto oppositeColor = _selectedPiece->getOppositeColor();
+	_isCheck[oppositeColor] = check;
+	_currentTurn = oppositeColor;
+
+	if (_currentTurn == _computer->getColor()) {
+		Rowcol next = _computer->decideMove(_boardLayer, _selectedRowcol, _selectedPiece);
+		movePiece(next);
+	}
+}
+
+void ChessScene::onCheckmate() {
+	_isGameEnd = true;
+
+	std::string str = (_currentTurn == ChessPiece::WHITE) ? "BLACK CHECKMATE" : "WHITE CHECKMATE";
+	auto label = Label::create(str, "Arial", 24);
+	label->setColor(Color3B::RED);
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	label->setPosition(visibleSize * 0.5f);
+	label->setScale(ChessUtility::getSpriteScale());
+
+	this->addChild(label);
 }
