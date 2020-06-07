@@ -1,6 +1,7 @@
 #include "ChessRook.h"
 #include "ChessUtility.h"
 #include "ChessScene/BoardLayer.h"
+#include "GameState.h"
 
 USING_NS_CC;
 
@@ -34,7 +35,7 @@ ChessRook* ChessRook::create(const ChessPiece::PieceType type, const ChessPiece:
 	return rook;
 }
 
-std::vector<Rowcol> ChessRook::getMoveAreas(BoardLayer * board, const Rowcol & current)
+std::vector<Rowcol> ChessRook::getMoveAreas(BoardLayer* board, bool throwException)
 {
 	std::vector<Rowcol> rowcols;
 
@@ -45,7 +46,7 @@ std::vector<Rowcol> ChessRook::getMoveAreas(BoardLayer * board, const Rowcol & c
 		for (int i = 1; i < MAX_ROWCOLS; ++i) {
 			for (int j = 0; j < 4; ++j) {
 				if (!possible[j]) continue;
-				Rowcol target = canAddMove(board, current, dir[j] * i);
+				Rowcol target = canAddMove(board, dir[j] * i);
 				if (target != Rowcol::IMPOSSIBLE) {
 					rowcols.push_back(target);
 					if (board->getChessPiece(target))
@@ -57,8 +58,9 @@ std::vector<Rowcol> ChessRook::getMoveAreas(BoardLayer * board, const Rowcol & c
 			}
 		}
 	}
-	catch (int e) {
-		throw e;
+	catch (GameState e) {
+		if (throwException)
+			throw e;
 	}
 
 	return rowcols;

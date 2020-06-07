@@ -151,8 +151,14 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\ChessScene\BoardLayer.cpp" />
     <ClCompile Include="..\Classes\ChessScene\ChessScene.cpp" />
+    <ClCompile Include="..\Classes\ChessScene\Computer.cpp" />
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessBishop.cpp" />
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessKing.cpp" />
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessKnight.cpp" />
     <ClCompile Include="..\Classes\ChessScene\Pieces\ChessPawn.cpp" />
     <ClCompile Include="..\Classes\ChessScene\Pieces\ChessPiece.cpp" />
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessQueen.cpp" />
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessRook.cpp" />
     <ClCompile Include="..\Classes\ChessScene\TimerLayer.cpp" />
     <ClCompile Include="..\Classes\ChessScene\UILayer.cpp" />
     <ClCompile Include="..\Classes\ChessUtility.cpp" />
@@ -163,12 +169,19 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\ChessScene\BoardLayer.h" />
     <ClInclude Include="..\Classes\ChessScene\ChessScene.h" />
+    <ClInclude Include="..\Classes\ChessScene\Computer.h" />
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessBishop.h" />
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessKing.h" />
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessKnight.h" />
     <ClInclude Include="..\Classes\ChessScene\Pieces\ChessPawn.h" />
     <ClInclude Include="..\Classes\ChessScene\Pieces\ChessPiece.h" />
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessQueen.h" />
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessRook.h" />
     <ClInclude Include="..\Classes\ChessScene\Pieces\Pieces.h" />
     <ClInclude Include="..\Classes\ChessScene\TimerLayer.h" />
     <ClInclude Include="..\Classes\ChessScene\UILayer.h" />
     <ClInclude Include="..\Classes\ChessUtility.h" />
+    <ClInclude Include="..\Classes\GameState.h" />
     <ClInclude Include="..\Classes\RowCol.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>

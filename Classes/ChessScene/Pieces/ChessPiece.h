@@ -28,18 +28,21 @@ public:
 		COLOR_COUNT
 	};
 public:
-	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, const Rowcol& current) = 0;
-	virtual Rowcol canAddMove(BoardLayer* board, const Rowcol base, Rowcol additonal);
-	virtual bool checkIsCheckState(BoardLayer* board, Rowcol current);
+	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, bool throwException = false) = 0;
+	virtual Rowcol canAddMove(BoardLayer* board, const Rowcol additional);
+	virtual bool checkIsCheckState(BoardLayer* board);
 	ChessPiece::Color getPieceColor() const;
 	ChessPiece::Color getOppositeColor() const;
 	void setPieceColor(Color color);
 	PieceType getPieceType() const;
 	void setPieceType(PieceType type);
 	virtual void onMove(const cocos2d::Point point, ChessPiece* toRemove, cocos2d::Node* parent);
-protected:
+	void setRowcol(Rowcol rowcol);
+	Rowcol getRowcol() const;
+private:
 	Color _pieceColor;
 	PieceType _pieceType;
+	Rowcol _rowcol;
 };
 
 #endif

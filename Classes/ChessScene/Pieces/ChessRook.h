@@ -7,7 +7,7 @@ class ChessRook : public ChessPiece {
 private:
 	Rowcol dir[4];
 public:
-	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, const Rowcol& current) override;
+	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, bool throwException = false) override;
 public:
 	static ChessRook* create(const ChessPiece::PieceType type, const ChessPiece::Color color);
 	ChessRook();

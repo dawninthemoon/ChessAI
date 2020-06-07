@@ -7,11 +7,11 @@ class ChessKing : public ChessPiece {
 private:
 	Rowcol dir[8];
 public:
-	virtual Rowcol canAddMove(BoardLayer* board, const Rowcol base, Rowcol additonal) override;
-	Rowcol canAddMoveExceptCheck(BoardLayer* board, const Rowcol base, Rowcol additonal);
-	virtual bool checkIsCheckState(BoardLayer* board, Rowcol current) override;
-	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, const Rowcol& current) override;
-	std::vector<Rowcol> getMoveAreasExceptCheck(BoardLayer* board, const Rowcol& current);
+	virtual Rowcol canAddMove(BoardLayer* board, Rowcol additonal) override;
+	Rowcol canAddMoveExceptCheck(BoardLayer* board, Rowcol additonal);
+	virtual bool checkIsCheckState(BoardLayer* board) override;
+	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, bool throwException = false) override;
+	std::vector<Rowcol> getMoveAreasExceptCheck(BoardLayer* board);
 public:
 	static ChessKing* create(const ChessPiece::PieceType type, const ChessPiece::Color color);
 	ChessKing();

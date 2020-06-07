@@ -1,6 +1,7 @@
 #include "ChessKing.h"
 #include "ChessUtility.h"
 #include "ChessScene/BoardLayer.h"
+#include "GameState.h"
 
 USING_NS_CC;
 
@@ -38,77 +39,78 @@ ChessKing* ChessKing::create(const ChessPiece::PieceType type, const ChessPiece:
 	return king;
 }
 
-Rowcol ChessKing::canAddMove(BoardLayer* board, const Rowcol base, Rowcol additonal)
+Rowcol ChessKing::canAddMove(BoardLayer* board, Rowcol additonal)
 {
 	try {
-		Rowcol target = ChessPiece::canAddMove(board, base, additonal);
+		Rowcol target = ChessPiece::canAddMove(board, additonal);
 		if (target == Rowcol::IMPOSSIBLE)
 			return target;
-		if (board->checkIsCheckStateForAll(base, target))
+		if (board->isKingisStalemated(this, target))
 			return Rowcol::IMPOSSIBLE;
 		return target;
 	}
-	catch (int e) {
+	catch (GameState e) {
 		throw e;
 	}
 }
 
-Rowcol ChessKing::canAddMoveExceptCheck(BoardLayer * board, const Rowcol base, Rowcol additonal)
+Rowcol ChessKing::canAddMoveExceptCheck(BoardLayer* board, Rowcol additonal)
 {
 	try {
-		Rowcol target = ChessPiece::canAddMove(board, base, additonal);
+		Rowcol target = ChessPiece::canAddMove(board, additonal);
 		if (target == Rowcol::IMPOSSIBLE)
 			return target;
 		return target;
 	}
-	catch (int e) {
+	catch (GameState e) {
 		throw e;
 	}
 }
 
-bool ChessKing::checkIsCheckState(BoardLayer * board, Rowcol current)
+bool ChessKing::checkIsCheckState(BoardLayer* board)
 {
 	try {
-		getMoveAreasExceptCheck(board, current);
+		getMoveAreasExceptCheck(board);
 	}
-	catch (int e) {
+	catch (GameState e) {
 		return true;
 	}
 	return false;
 }
 
-std::vector<Rowcol> ChessKing::getMoveAreas(BoardLayer* board, const Rowcol & current)
+std::vector<Rowcol> ChessKing::getMoveAreas(BoardLayer* board, bool throwException)
 {
 	std::vector<Rowcol> rowcols;
 	
 	try {
 		for (int i = 0; i < 8; ++i) {
-			Rowcol target = canAddMove(board, current, dir[i]);
+			Rowcol target = canAddMove(board, dir[i]);
 			if (target != Rowcol::IMPOSSIBLE) {
 				rowcols.push_back(target);
 			}
 		}
 	}
-	catch (int e) {
-		throw e;
+	catch (GameState e) {
+		if (throwException)
+			throw e;
 	}
 
 	return rowcols;
 }
 
-std::vector<Rowcol> ChessKing::getMoveAreasExceptCheck(BoardLayer* board, const Rowcol & current)
+std::vector<Rowcol> ChessKing::getMoveAreasExceptCheck(BoardLayer* board)
 {
 	std::vector<Rowcol> rowcols;
 
 	try {
 		for (int i = 0; i < 8; ++i) {
-			Rowcol target = canAddMoveExceptCheck(board, current, dir[i]);
+			Rowcol target = canAddMoveExceptCheck(board, dir[i]);
 			if (target != Rowcol::IMPOSSIBLE) {
 				rowcols.push_back(target);
 			}
 		}
 	}
-	catch (int e) {
+	catch (GameState e) {
 		throw e;
 	}
 

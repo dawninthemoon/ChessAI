@@ -2,6 +2,7 @@
 #include "ChessUtility.h"
 #include "ChessScene/BoardLayer.h"
 #include <algorithm>
+#include "GameState.h"
 
 USING_NS_CC;
 
@@ -39,7 +40,7 @@ ChessQueen* ChessQueen::create(const ChessPiece::PieceType type, const ChessPiec
 	return queen;
 }
 
-std::vector<Rowcol> ChessQueen::getMoveAreas(BoardLayer * board, const Rowcol & current)
+std::vector<Rowcol> ChessQueen::getMoveAreas(BoardLayer* board, bool throwException)
 {
 	std::vector<Rowcol> rowcols;
 
@@ -50,7 +51,7 @@ std::vector<Rowcol> ChessQueen::getMoveAreas(BoardLayer * board, const Rowcol & 
 		for (int i = 1; i < MAX_ROWCOLS; ++i) {
 			for (int j = 0; j < 8; ++j) {
 				if (!possible[j]) continue;
-				Rowcol target = canAddMove(board, current, dir[j] * i);
+				Rowcol target = canAddMove(board, dir[j] * i);
 				if (target != Rowcol::IMPOSSIBLE) {
 					rowcols.push_back(target);
 					if (board->getChessPiece(target))
@@ -62,8 +63,9 @@ std::vector<Rowcol> ChessQueen::getMoveAreas(BoardLayer * board, const Rowcol & 
 			}
 		}
 	}
-	catch (int e) {
-		throw e;
+	catch (GameState e) {
+		if (throwException)
+			throw e;
 	}
 
 	return rowcols;

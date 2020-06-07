@@ -9,6 +9,7 @@ class BoardLayer;
 class TimerLayer;
 class ChessPiece;
 class Computer;
+enum class GameState;
 
 class ChessScene : public cocos2d::Scene
 {
@@ -33,7 +34,7 @@ private:
 	void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
 	
 	void setCheck(bool check);
-	void onCheckmate();
+	void onCheckmate(GameState state);
 
 	void showPossibleRowcols(const Rowcol& rowcol);
 	bool tryMovePiece(const Rowcol& next);

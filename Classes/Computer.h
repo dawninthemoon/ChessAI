@@ -1,19 +1,19 @@
 #ifndef __COMPUTER_H__
 #define __COMPUTER_H__
 
-#include "RowCol.h"
-#include "ChessScene/Pieces/ChessPiece.h"
-
+struct Rowcol;
 class BoardLayer;
+class ChessPiece;
 
 class Computer {
 private:
-	ChessPiece::Color _cpuColor;
+	const int MAX_TIMEOUT = 10000;
+	int _cpuColor;
 public:
 	Computer();
 	virtual ~Computer();
 public:
-	Rowcol decideMove(BoardLayer* board, ChessPiece*& selectedPiece);
+	Rowcol decideMove(BoardLayer* board, Rowcol& selectedPrev, ChessPiece*& selectedPiece);
 	int getColor() const;
 };
 

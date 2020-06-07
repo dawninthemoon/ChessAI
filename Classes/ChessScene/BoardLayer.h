@@ -28,19 +28,25 @@ public:
 	void initBoard();
 	void initBoardSize(cocos2d::Size baseSize);
 
-	ChessPiece* getChessPiece(const Rowcol& rowcol);
-	ChessPiece* getChessPiece(const int& row, const int& column);
-	Rowcol findKingRowcolByColor(ChessPiece::Color color);
+	std::vector<ChessPiece*> getPiecesByColor(ChessPiece::Color color);
 
-	int calculateScoreIfMoved(ChessPiece* piece, ChessPiece::Color color, const Rowcol prev, const Rowcol next);
-	void moveChessPiece(ChessPiece* piece, const Rowcol prev, const Rowcol next);
-	bool checkIsCheckStateForAll(Rowcol kingRowcol, Rowcol target);
+	void setChessPiece(ChessPiece* piece, const Rowcol rowcol);
+	void setChessPiece(ChessPiece* piece, const int row, const int column);
+	ChessPiece* getChessPiece(const Rowcol rowcol) const;
+	ChessPiece* getChessPiece(const int row, const int column) const;
+
+	int calculateScoreIfMoved(ChessPiece* piece, const Rowcol next);
+	void moveChessPiece(ChessPiece* piece, const Rowcol next);
+	void checkIsCheck(ChessPiece::Color myColor);
+	bool isInCheck(ChessPiece::Color myColor);
+	bool isCheckmate(ChessPiece::Color oppositeColor);
+	bool isKingisStalemated(ChessPiece* king, Rowcol target);
 
 	void createPiece(Rowcol rowcol, ChessPiece::PieceType type, ChessPiece::Color color);
 
 	bool isValidPos(const cocos2d::Point& pos);
-	bool isValidRowcol(const int& row, const int& column);
-	bool isValidRowcol(const Rowcol& rowcol);
+	bool isValidRowcol(const int row, const int column) const;
+	bool isValidRowcol(const Rowcol rowcol) const;
 
 	void showPossibleRowcols(Rowcol rowcol, const std::string& path);
 	void removeAllPossibleRowcols();

@@ -1,6 +1,7 @@
 #include "ChessScene/Pieces/ChessBishop.h"
 #include "ChessUtility.h"
 #include "ChessScene/BoardLayer.h"
+#include "GameState.h"
 
 USING_NS_CC;
 
@@ -34,7 +35,7 @@ ChessBishop* ChessBishop::create(const ChessPiece::PieceType type, const ChessPi
 	return bishop;
 }
 
-std::vector<Rowcol> ChessBishop::getMoveAreas(BoardLayer* board, const Rowcol & current)
+std::vector<Rowcol> ChessBishop::getMoveAreas(BoardLayer* board, bool throwException)
 {
 	std::vector<Rowcol> rowcols;
 
@@ -45,7 +46,7 @@ std::vector<Rowcol> ChessBishop::getMoveAreas(BoardLayer* board, const Rowcol & 
 		for (int i = 1; i < MAX_ROWCOLS; ++i) {
 			for (int j = 0; j < 4; ++j) {
 				if (!possible[j]) continue;
-				Rowcol target = canAddMove(board, current, dir[j] * i);
+				Rowcol target = canAddMove(board, dir[j] * i);
 				if (target != Rowcol::IMPOSSIBLE) {
 					rowcols.push_back(target);
 					if (board->getChessPiece(target))
@@ -57,8 +58,9 @@ std::vector<Rowcol> ChessBishop::getMoveAreas(BoardLayer* board, const Rowcol & 
 			}
 		}
 	}
-	catch (int e) {
-		throw e;
+	catch (GameState e) {
+		if (throwException)
+			throw e;
 	}
 
 	return rowcols;

@@ -42,10 +42,28 @@
     <ClCompile Include="..\Classes\RowCol.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\ChessScene\Computer.cpp">
+      <Filter>src\ChessScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessBishop.cpp">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessKing.cpp">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessKnight.cpp">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClCompile>
     <ClCompile Include="..\Classes\ChessScene\Pieces\ChessPawn.cpp">
       <Filter>src\ChessScene\Picecs</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\ChessScene\Pieces\ChessPiece.cpp">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessQueen.cpp">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ChessScene\Pieces\ChessRook.cpp">
       <Filter>src\ChessScene\Picecs</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,14 +92,35 @@
     <ClInclude Include="..\Classes\RowCol.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Computer.h">
+      <Filter>src\ChessScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessBishop.h">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessKing.h">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessKnight.h">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClInclude>
     <ClInclude Include="..\Classes\ChessScene\Pieces\ChessPawn.h">
       <Filter>src\ChessScene\Picecs</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\ChessScene\Pieces\ChessPiece.h">
       <Filter>src\ChessScene\Picecs</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessQueen.h">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Pieces\ChessRook.h">
+      <Filter>src\ChessScene\Picecs</Filter>
+    </ClInclude>
     <ClInclude Include="..\Classes\ChessScene\Pieces\Pieces.h">
       <Filter>src\ChessScene\Picecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameState.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

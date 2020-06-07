@@ -93,12 +93,12 @@ int ChessUtility::getPieceValue(ChessPiece* piece, ChessPiece::Color color) {
 	if (piece == nullptr) return 0;
 
 	static int values[ChessPiece::TYPE_COUNT] = {
-		10,
-		30,
-		30,
-		50,
-		90,
-		900
+		1,
+		3,
+		3,
+		5,
+		9,
+		100000
 	};
 
 	int multiplyer = (piece->getPieceColor() == color) ? 1 : -1;

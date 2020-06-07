@@ -1,5 +1,6 @@
 #include "ChessScene/Pieces/ChessPiece.h"
 #include "ChessScene/BoardLayer.h"
+#include "GameState.h"
 
 USING_NS_CC;
 
@@ -11,9 +12,9 @@ bool ChessPiece::init() {
 	return true;
 }
 
-Rowcol ChessPiece::canAddMove(BoardLayer* board, const Rowcol base, Rowcol additonal) {
-	additonal.row *= (getPieceColor() == Color::WHITE) ? -1 : 1;
-	Rowcol target = base + additonal;
+Rowcol ChessPiece::canAddMove(BoardLayer* board, Rowcol additional) {
+	additional.row *= (getPieceColor() == Color::WHITE) ? -1 : 1;
+	Rowcol target = _rowcol + additional;
 
 	if (!board->isValidRowcol(target))
 		return Rowcol::IMPOSSIBLE;
@@ -24,18 +25,18 @@ Rowcol ChessPiece::canAddMove(BoardLayer* board, const Rowcol base, Rowcol addit
 		if (piece->getPieceColor() == getPieceColor())
 			return Rowcol::IMPOSSIBLE;
 		if (piece->getPieceType() == ChessPiece::KING)
-			throw 1;
+			throw getCheckState(getPieceColor());
 	}
 
 	return target;
 }
 
-bool ChessPiece::checkIsCheckState(BoardLayer * board, Rowcol current)
+bool ChessPiece::checkIsCheckState(BoardLayer* board)
 {
 	try {
-		getMoveAreas(board, current);
+		getMoveAreas(board);
 	}
-	catch (int e) {
+	catch (GameState e) {
 		return true;
 	}
 	return false;
@@ -59,6 +60,7 @@ void ChessPiece::setPieceColor(ChessPiece::Color color) {
 ChessPiece::PieceType ChessPiece::getPieceType() const {
 	return _pieceType;
 }
+
 void ChessPiece::setPieceType(ChessPiece::PieceType type) {
 	_pieceType = type;
 }
@@ -73,4 +75,13 @@ void ChessPiece::onMove(const Point target, ChessPiece* toRemove, cocos2d::Node*
 	});
 	Sequence* sequence = Sequence::create(moveTo, callFunc, nullptr);
 	this->runAction(sequence);
+}
+
+void ChessPiece::setRowcol(Rowcol rowcol) {
+	_rowcol = rowcol;
+}
+
+Rowcol ChessPiece::getRowcol() const
+{
+	return _rowcol;
 }

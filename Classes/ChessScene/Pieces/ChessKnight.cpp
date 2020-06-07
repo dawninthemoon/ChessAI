@@ -1,6 +1,7 @@
 #include "ChessScene/Pieces/ChessKnight.h"
 #include "ChessUtility.h"
 #include "ChessScene/BoardLayer.h"
+#include "GameState.h"
 
 USING_NS_CC;
 
@@ -38,20 +39,21 @@ ChessKnight* ChessKnight::create(const ChessPiece::PieceType type, const ChessPi
 	return knight;
 }
 
-std::vector<Rowcol> ChessKnight::getMoveAreas(BoardLayer * board, const Rowcol & current)
+std::vector<Rowcol> ChessKnight::getMoveAreas(BoardLayer* board, bool throwException)
 {
 	std::vector<Rowcol> rowcols;
 
 	try {
 		for (int i = 0; i < 8; i++) {
-			Rowcol target = canAddMove(board, current, dir[i]);
+			Rowcol target = canAddMove(board, dir[i]);
 			if (target != Rowcol::IMPOSSIBLE) {
 				rowcols.push_back(target);
 			}
 		}
 	}
-	catch (int e) {
-		throw e;
+	catch (GameState e) {
+		if (throwException)
+			throw e;
 	}
 
 	return rowcols;

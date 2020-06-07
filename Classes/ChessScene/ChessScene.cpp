@@ -127,7 +127,7 @@ void ChessScene::showPossibleRowcols(const Rowcol& rowcol) {
 
 	if (_currentTurn != color) return;
 	
-	_possibleRowcols = _selectedPiece->getMoveAreas(_boardLayer, rowcol);
+	_possibleRowcols = _selectedPiece->getMoveAreas(_boardLayer);
 
 	ChessPiece::PieceType type = _selectedPiece->getPieceType();
 	std::string path = ChessUtility::piecePath[color][type];
@@ -159,21 +159,24 @@ void ChessScene::movePiece(const Rowcol& next)
 {
 	try {
 		ChessPiece::Color color = _selectedPiece->getPieceColor();
-		_boardLayer->moveChessPiece(_selectedPiece, _selectedRowcol, next);
+		_boardLayer->moveChessPiece(_selectedPiece, next);
 		if (_isCheck[color])
-			throw GameState::DEFEAT;
+			throw (color == ChessPiece::WHITE) ? GameState::DEFEAT_BLACK : GameState::DEFEAT_WHITE;
 		setCheck(false);
 	}
 	catch (GameState e) {
 		switch (e) {
-		case GameState::CHECK:
+		case GameState::CHECK_WHITE:
 			setCheck(true);
 			break;
-		case GameState::CHECKMATE:
-			onCheckmate();
+		case GameState::CHECK_BLACK:
+			setCheck(true);
 			break;
-		case GameState::DEFEAT:
-			onCheckmate();
+		case GameState::CHECKMATE_WHITE:
+		case GameState::CHECKMATE_BLACK:
+		case GameState::DEFEAT_WHITE:
+		case GameState::DEFEAT_BLACK:
+			onCheckmate(e);
 			break;
 		default:
 			break;
@@ -187,15 +190,22 @@ void ChessScene::setCheck(bool check) {
 	_currentTurn = oppositeColor;
 
 	if (_currentTurn == _computer->getColor()) {
-		Rowcol next = _computer->decideMove(_boardLayer, _selectedRowcol, _selectedPiece);
-		movePiece(next);
+		this->runAction(
+			Sequence::create(
+				DelayTime::create(0.5f),
+				CallFunc::create([&]() { 
+					Rowcol next = _computer->decideMove(_boardLayer, _selectedPiece);
+					movePiece(next); 
+				}),
+				nullptr));
 	}
 }
 
-void ChessScene::onCheckmate() {
+void ChessScene::onCheckmate(GameState state) {
 	_isGameEnd = true;
 
-	std::string str = (_currentTurn == ChessPiece::WHITE) ? "BLACK CHECKMATE" : "WHITE CHECKMATE";
+	// temp
+	std::string str = (state == GameState::CHECKMATE_BLACK || state == GameState::DEFEAT_BLACK) ? "BLACK CHECKMATE" : "WHITE CHECKMATE";
 	auto label = Label::create(str, "Arial", 24);
 	label->setColor(Color3B::RED);
 	auto visibleSize = Director::getInstance()->getVisibleSize();

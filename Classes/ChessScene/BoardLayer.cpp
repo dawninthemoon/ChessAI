@@ -138,7 +138,20 @@ void BoardLayer::initBoardSize(Size baseSize) {
 	_pixelInterval *= scale;
 }
 
-bool BoardLayer::isValidRowcol(const int& row, const int& column) {
+std::vector<ChessPiece*> BoardLayer::getPiecesByColor(ChessPiece::Color color)
+{
+	std::vector<ChessPiece*> vec;
+	for (int r = 0; r < MAX_ROWCOLS; ++r) {
+		for (int c = 0; c < MAX_ROWCOLS; ++c) {
+			if (_board[r][c] && (_board[r][c]->getPieceColor() == color)) {
+				vec.push_back(_board[r][c]);
+			}
+		}
+	}
+	return vec;
+}
+
+bool BoardLayer::isValidRowcol(const int row, const int column) const {
 	return
 		(row >= 0) &&
 		(row < MAX_ROWCOLS) &&
@@ -146,7 +159,7 @@ bool BoardLayer::isValidRowcol(const int& row, const int& column) {
 		(column < MAX_ROWCOLS);
 }
 
-bool BoardLayer::isValidRowcol(const Rowcol& rowcol) {
+bool BoardLayer::isValidRowcol(const Rowcol rowcol) const {
 	return isValidRowcol(rowcol.row, rowcol.column);
 }
 
@@ -158,32 +171,26 @@ bool BoardLayer::isValidPos(const Point& pos) {
 		(pos.y >= _endPoint.y + _pixelMargin);
 }
 
+void BoardLayer::setChessPiece(ChessPiece* piece, const Rowcol rowcol) {
+	setChessPiece(piece, rowcol.row, rowcol.column);
+}
+void BoardLayer::setChessPiece(ChessPiece* piece, const int row, const int column) {
+	_board[row][column] = piece;
+	if (piece != nullptr)
+		piece->setRowcol(Rowcol(row, column));
+}
 
-ChessPiece* BoardLayer::getChessPiece(const Rowcol& rowcol) {
+ChessPiece* BoardLayer::getChessPiece(const Rowcol rowcol) const {
 	int r = rowcol.row;
 	int c = rowcol.column;
 	ChessPiece* piece = getChessPiece(r, c);
 	return piece;
 }
 
-ChessPiece* BoardLayer::getChessPiece(const int& row, const int& column) {
+ChessPiece* BoardLayer::getChessPiece(const int row, const int column) const {
 	if (!isValidRowcol(row, column)) return nullptr;
 	ChessPiece* piece = _board[row][column];
 	return piece;
-}
-
-Rowcol BoardLayer::findKingRowcolByColor(ChessPiece::Color color)
-{
-	for (int i = 0; i < MAX_ROWCOLS; ++i) {
-		for (int j = 0; j < MAX_ROWCOLS; ++j) {
-			if (_board[i][j] != nullptr) {
-				if (_board[i][j]->getPieceColor() == color &&
-					_board[i][j]->getPieceType() == ChessPiece::KING) {
-					return Rowcol(i, j);
-				}
-			}
-		}
-	}
 }
 
 void BoardLayer::createPiece(Rowcol rowcol, ChessPiece::PieceType type, ChessPiece::Color color) {
@@ -191,16 +198,20 @@ void BoardLayer::createPiece(Rowcol rowcol, ChessPiece::PieceType type, ChessPie
 
 	auto piece = ChessUtility::createPiece(type, color);
 	ChessUtility::initSprite(piece, this, pos);
+	piece->setRowcol(rowcol);
 
 	_board[rowcol.row][rowcol.column] = piece;
 }
 
-int BoardLayer::calculateScoreIfMoved(ChessPiece* piece, ChessPiece::Color color, const Rowcol prev, const Rowcol next) {
-	ChessPiece* prevTemp = _board[prev.row][prev.column];
-	ChessPiece* nextTemp = _board[next.row][next.column];
+int BoardLayer::calculateScoreIfMoved(ChessPiece* piece, const Rowcol next) {
+	Rowcol prev = piece->getRowcol();
+	ChessPiece::Color color = piece->getPieceColor();
 
-	_board[prev.row][prev.column] = nullptr;
-	_board[next.row][next.column] = piece;
+	ChessPiece* prevTemp = getChessPiece(prev);
+	ChessPiece* nextTemp = getChessPiece(next);
+
+	setChessPiece(nullptr, prev);
+	setChessPiece(piece, next);
 	
 	int score = 0;
 	for (int r = 0; r < MAX_ROWCOLS; ++r) {
@@ -209,69 +220,89 @@ int BoardLayer::calculateScoreIfMoved(ChessPiece* piece, ChessPiece::Color color
 		}
 	}
 
-	_board[prev.row][prev.column] = prevTemp;
-	_board[next.row][next.column] = nextTemp;
+	setChessPiece(prevTemp, prev);
+	setChessPiece(nextTemp, next);
 	
 	return score;
 }
 
-void BoardLayer::moveChessPiece(ChessPiece* piece, const Rowcol prev, const Rowcol next) {
-	_board[prev.row][prev.column] = nullptr;
+void BoardLayer::moveChessPiece(ChessPiece* piece, const Rowcol next) {
+	setChessPiece(nullptr, piece->getRowcol());
 	
-	ChessPiece* toMove = getChessPiece(next);
-	
-	_board[next.row][next.column] = piece;
-	piece->onMove(rowcolToPoint(next), toMove, this);
+	ChessPiece* toRemove = getChessPiece(next);
+	setChessPiece(piece, next);
+	piece->onMove(rowcolToPoint(next), toRemove, this);
 
-	ChessPiece::Color oppositeColor = piece->getOppositeColor();
-	
-	if (piece->checkIsCheckState(this, next)) {
-		bool isCheckmate = true;
-		Rowcol kingLocation = findKingRowcolByColor(oppositeColor);
-		ChessPiece* king = _board[kingLocation.row][kingLocation.column];
-
-		auto possibleWays = king->getMoveAreas(this, kingLocation);
-		for (const auto& rc : possibleWays) {
-			int r = rc.row, c = rc.column;
-
-			if (!checkIsCheckStateForAll(kingLocation, Rowcol(r, c))) {
-				isCheckmate = false;
-			}
-
-			if (!isCheckmate) break;
-		}
-
-		throw isCheckmate ? GameState::CHECKMATE : GameState::CHECK;
-	}
+	checkIsCheck(piece->getOppositeColor());
+	checkIsCheck(piece->getPieceColor());
 }
 
-bool BoardLayer::checkIsCheckStateForAll(Rowcol kingRowcol, Rowcol target)
-{
-	int r = target.row, c = target.column;
-	auto king = getChessPiece(kingRowcol);
-	auto moverColor = king->getPieceColor();
-	
-	ChessPiece* temp = _board[r][c];
-	_board[r][c] = king;
-	_board[kingRowcol.row][kingRowcol.column] = nullptr;
+void BoardLayer::checkIsCheck(ChessPiece::Color myColor) {
+	bool isCheck = false;
 
-	for (int r = 0; r < MAX_ROWCOLS; ++r) {
-		for (int c = 0; c < MAX_ROWCOLS; ++c) {
-			ChessPiece* piece = _board[r][c];
-			if (piece && (piece->getPieceColor() == moverColor)) {
-				if (piece->checkIsCheckState(this, Rowcol(r, c))) {
-					_board[r][c] = temp;
-					_board[kingRowcol.row][kingRowcol.column] = king;
-					return true;
-				}
-			}
+	auto myPieces = getPiecesByColor(myColor);
+	for (const auto& piece : myPieces) {
+		if (piece->checkIsCheckState(this)) {
+			isCheck = true;
+			if (isCheckmate(piece->getOppositeColor()))
+				throw getCheckmateState(myColor);
 		}
 	}
 
-	_board[r][c] = temp;
-	_board[kingRowcol.row][kingRowcol.column] = king;
+	if (isCheck) throw getCheckState(myColor);
+}
 
+bool BoardLayer::isKingisStalemated(ChessPiece* king, Rowcol target)
+{
+	Rowcol prev = king->getRowcol();
+	ChessPiece* temp = getChessPiece(target);
+	bool stalemated = false;
+
+	setChessPiece(nullptr, prev);
+	setChessPiece(king, target);
+
+	stalemated = isInCheck(king->getOppositeColor());
+
+	setChessPiece(king, prev);
+	setChessPiece(temp, target);
+
+	return stalemated;
+}
+
+bool BoardLayer::isInCheck(ChessPiece::Color myColor) {
+	auto pieces = getPiecesByColor(myColor);
+	for (const auto& piece : pieces) {
+		if (piece->checkIsCheckState(this)) {
+			return true;
+		}
+	}
 	return false;
+}
+
+bool BoardLayer::isCheckmate(ChessPiece::Color oppositeColor) {
+	bool isNotCheckmate = false;
+	auto pieces = getPiecesByColor(oppositeColor);
+	for (const auto& piece : pieces) {
+		auto moves = piece->getMoveAreas(this);
+		Rowcol prevRc = piece->getRowcol();
+		
+		for (const auto& rc : moves) {
+			ChessPiece* nextTemp = getChessPiece(rc);
+
+			setChessPiece(nullptr, prevRc);
+			setChessPiece(piece, rc);
+
+			if (!isInCheck(piece->getOppositeColor())) {
+				isNotCheckmate = true;
+			}
+
+			setChessPiece(piece, prevRc);
+			setChessPiece(nextTemp, rc);
+
+			if (isNotCheckmate) return false;
+		}
+	}
+	return true;
 }
 
 void BoardLayer::showPossibleRowcols(Rowcol rowcol, const std::string& path) {
