@@ -34,7 +34,7 @@ Rowcol ChessPiece::canAddMove(BoardLayer* board, Rowcol additional) {
 bool ChessPiece::checkIsCheckState(BoardLayer* board)
 {
 	try {
-		getMoveAreas(board);
+		getMoveAreas(board, true);
 	}
 	catch (GameState e) {
 		return true;

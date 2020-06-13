@@ -244,8 +244,9 @@ void BoardLayer::checkIsCheck(ChessPiece::Color myColor) {
 	for (const auto& piece : myPieces) {
 		if (piece->checkIsCheckState(this)) {
 			isCheck = true;
-			if (isCheckmate(piece->getOppositeColor()))
+			if (isCheckmate(piece->getOppositeColor())) {
 				throw getCheckmateState(myColor);
+			}
 		}
 	}
 
@@ -302,6 +303,7 @@ bool BoardLayer::isCheckmate(ChessPiece::Color oppositeColor) {
 			if (isNotCheckmate) return false;
 		}
 	}
+
 	return true;
 }
 

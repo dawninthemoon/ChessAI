@@ -12,7 +12,7 @@ public:
 	static ChessQueen* create(const ChessPiece::PieceType type, const ChessPiece::Color color);
 	ChessQueen();
 	virtual ~ChessQueen();
-	virtual bool init();
+	virtual bool init() override;
 	CREATE_FUNC(ChessQueen);
 };
 

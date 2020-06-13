@@ -16,6 +16,7 @@ class ChessScene : public cocos2d::Scene
 private:
 	bool _isCheck[2];
 	bool _isGameEnd;
+	bool _waiting;
 	int _currentTurn;
 	UILayer* _uiLayer;
 	BoardLayer* _boardLayer;

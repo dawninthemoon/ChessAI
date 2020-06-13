@@ -31,6 +31,7 @@ bool ChessScene::init()
 
 void ChessScene::initData() {
 	_isGameEnd = false;
+	_waiting = false;
 	_currentTurn = ChessPiece::WHITE;
 	_selectedPiece = nullptr;
 	_selectedRowcol = Rowcol::IMPOSSIBLE;
@@ -93,7 +94,7 @@ void ChessScene::onTouchMoved(Touch* touch, Event* event) {
 }
 
 void ChessScene::onTouchEnded(Touch* touch, Event* event) {
-	if (_isGameEnd) return;
+	if (_isGameEnd || _waiting) return;
 
 	Point touchPosition = touch->getLocation();
 	Rowcol rowcol = _boardLayer->pointToRowcol(touchPosition);
@@ -160,8 +161,8 @@ void ChessScene::movePiece(const Rowcol& next)
 	try {
 		ChessPiece::Color color = _selectedPiece->getPieceColor();
 		_boardLayer->moveChessPiece(_selectedPiece, next);
-		if (_isCheck[color])
-			throw (color == ChessPiece::WHITE) ? GameState::DEFEAT_BLACK : GameState::DEFEAT_WHITE;
+		//if (_isCheck[color])
+		//	throw (color == ChessPiece::WHITE) ? GameState::DEFEAT_WHITE : GameState::DEFEAT_BLACK;
 		setCheck(false);
 	}
 	catch (GameState e) {
@@ -190,10 +191,12 @@ void ChessScene::setCheck(bool check) {
 	_currentTurn = oppositeColor;
 
 	if (_currentTurn == _computer->getColor()) {
+		_waiting = true;
 		this->runAction(
 			Sequence::create(
 				DelayTime::create(0.5f),
 				CallFunc::create([&]() { 
+					_waiting = false;
 					Rowcol next = _computer->decideMove(_boardLayer, _selectedPiece);
 					movePiece(next); 
 				}),
