@@ -58,7 +58,7 @@ bool ChessScene::initLayers() {
 
 bool ChessScene::initSpriteFrames() {
 	auto cache = SpriteFrameCache::getInstance();
-	Rect pieceRect = Rect(0, 0, 32, 32);
+	Rect pieceRect = Rect(0, 0, 64, 64);
 
 	for (int i = 0; i < ChessPiece::COLOR_COUNT; ++i) {
 		for (int j = 0; j < ChessPiece::TYPE_COUNT; ++j) {

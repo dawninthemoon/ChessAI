@@ -42,9 +42,6 @@
     <ClCompile Include="..\Classes\RowCol.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\ChessScene\Computer.cpp">
-      <Filter>src\ChessScene</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\ChessScene\Pieces\ChessBishop.cpp">
       <Filter>src\ChessScene\Picecs</Filter>
     </ClCompile>
@@ -65,6 +62,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\ChessScene\Pieces\ChessRook.cpp">
       <Filter>src\ChessScene\Picecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ChessScene\Computer.cpp">
+      <Filter>src\ChessScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,9 +92,6 @@
     <ClInclude Include="..\Classes\RowCol.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\ChessScene\Computer.h">
-      <Filter>src\ChessScene</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\ChessScene\Pieces\ChessBishop.h">
       <Filter>src\ChessScene\Picecs</Filter>
     </ClInclude>
@@ -121,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\GameState.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ChessScene\Computer.h">
+      <Filter>src\ChessScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

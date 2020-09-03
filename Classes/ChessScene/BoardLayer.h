@@ -9,8 +9,8 @@ struct Rowcol;
 class ChessKing;
 
 constexpr int MAX_ROWCOLS = 8;
-constexpr int PIXEL_MARGIN = 16;
-constexpr int PIXEL_INTERVAL = 36;
+constexpr int PIXEL_MARGIN = 8;
+constexpr int PIXEL_INTERVAL = 64;
 
 class BoardLayer : public cocos2d::Layer {
 private:

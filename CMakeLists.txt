@@ -50,8 +50,7 @@ endif()
 file (GLOB_RECURSE MY_SOURCES Classes/*.cpp Classes/ChessScene/*.cpp Classes/ChessScene/Pieces/*.cpp)
 file (GLOB_RECURSE MY_HEADERS Classes/*.h Classes/ChessScene/*.h Classes/ChessScene/Pieces/*.h)
 
-list(APPEND GAME_SOURCE ${MY_SOURCES} Classes/ChessScene/Computer.cpp)
-list(APPEND GAME_HEADER ${MY_HEADERS} Classes/ChessScene/Computer.h)
+
 
 if(ANDROID)
     # change APP_NAME to the share library name for Android, it's value depend on AndroidManifest.xml

@@ -3,7 +3,7 @@
 
 USING_NS_CC;
 
-cocos2d::Size ChessUtility::standardSize = cocos2d::Size(360.0f, 640.0f);
+cocos2d::Size ChessUtility::standardSize = cocos2d::Size(540.0f, 960.0f);
 
 std::string** ChessUtility::generatePiecePath() {
 	std::string** str = new std::string*[2];

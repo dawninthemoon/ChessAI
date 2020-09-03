@@ -114,7 +114,6 @@ Size BoardLayer::initBoardSprite() {
 
 	const std::string boardFileName = "etc/spr_chessBoard.png";
 	auto boardSprite = ChessUtility::createSprite(boardFileName, this, winSize * 0.5f);
-
 	Size contentSize = boardSprite->getContentSize();
 	return contentSize;
 }
