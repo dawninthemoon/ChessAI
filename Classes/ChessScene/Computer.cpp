@@ -11,7 +11,7 @@ Computer::~Computer() { }
 
 Rowcol Computer::decideMove(BoardLayer* board, ChessPiece*& selectedPiece) {
 	Rowcol selectedNext = Rowcol::IMPOSSIBLE;
-	int maxScore = -987654321;
+	int maxScore = std::numeric_limits<int>::min();
 
 	auto pieces = board->getPiecesByColor(_cpuColor);
 	for (const auto& piece : pieces) {

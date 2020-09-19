@@ -20,8 +20,7 @@ bool ChessRook::init()
 	return true;
 }
 
-ChessRook* ChessRook::create(const ChessPiece::PieceType type, const ChessPiece::Color color)
-{
+ChessRook* ChessRook::create(const ChessPiece::PieceType type, const ChessPiece::Color color) {
 	const std::string filePath = ChessUtility::piecePath[color][type];
 	ChessRook* rook = ChessRook::create();
 	if (rook && rook->initWithSpriteFrameName(filePath)) {
@@ -35,32 +34,25 @@ ChessRook* ChessRook::create(const ChessPiece::PieceType type, const ChessPiece:
 	return rook;
 }
 
-std::vector<Rowcol> ChessRook::getMoveAreas(BoardLayer* board, bool throwException)
-{
+std::vector<Rowcol> ChessRook::getMoveAreas(BoardLayer* board) {
 	std::vector<Rowcol> rowcols;
 
 	bool possible[4];
 	std::fill(possible, possible + 4, true);
 
-	try {
-		for (int i = 1; i < MAX_ROWCOLS; ++i) {
-			for (int j = 0; j < 4; ++j) {
-				if (!possible[j]) continue;
-				Rowcol target = canAddMove(board, dir[j] * i);
-				if (target != Rowcol::IMPOSSIBLE) {
-					rowcols.push_back(target);
-					if (board->getChessPiece(target))
-						possible[j] = false;
-				}
-				else {
+	for (int i = 1; i < MAX_ROWCOLS; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			if (!possible[j]) continue;
+			Rowcol target = canAddMove(board, dir[j] * i);
+			if (target != Rowcol::IMPOSSIBLE) {
+				rowcols.push_back(target);
+				if (board->getChessPiece(target))
 					possible[j] = false;
-				}
+			}
+			else {
+				possible[j] = false;
 			}
 		}
-	}
-	catch (GameState e) {
-		if (throwException)
-			throw e;
 	}
 
 	return rowcols;

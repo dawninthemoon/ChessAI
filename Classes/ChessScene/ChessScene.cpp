@@ -102,6 +102,11 @@ void ChessScene::onTouchEnded(Touch* touch, Event* event) {
 	auto prev = this->getChildByTag(1);
 	this->removeChild(prev);
 
+	if (_checkLabel) {
+		this->removeChild(_checkLabel);
+		_checkLabel->release();
+	}
+
 	if (_boardLayer->isValidRowcol(rowcol)) {
 		if (_selectedRowcol != Rowcol::IMPOSSIBLE) {
 			if (!tryMovePiece(rowcol) && _boardLayer->getChessPiece(rowcol)) {
@@ -142,6 +147,7 @@ bool ChessScene::tryMovePiece(const Rowcol& next) {
 	bool bRet = false;
 
 	_boardLayer->removeAllPossibleRowcols();
+
 	for (const auto& rc : _possibleRowcols) {
 		if (next == rc) {
 			bRet = true;
@@ -158,37 +164,43 @@ bool ChessScene::tryMovePiece(const Rowcol& next) {
 
 void ChessScene::movePiece(const Rowcol& next)
 {
-	try {
-		ChessPiece::Color color = _selectedPiece->getPieceColor();
-		_boardLayer->moveChessPiece(_selectedPiece, next);
-		//if (_isCheck[color])
-		//	throw (color == ChessPiece::WHITE) ? GameState::DEFEAT_WHITE : GameState::DEFEAT_BLACK;
+	ChessPiece::Color color = _selectedPiece->getPieceColor();
+	_boardLayer->moveChessPiece(_selectedPiece, next);
+	
+	ChessPiece::Color oppositeColor = _selectedPiece->getOppositeColor();
+	
+	if (_boardLayer->isInCheck(oppositeColor)) {
+		if (_boardLayer->isCheckmate(color))
+			onCheckmate(color);
+		else
+			setCheck(true);
+	}
+	else
 		setCheck(false);
-	}
-	catch (GameState e) {
-		switch (e) {
-		case GameState::CHECK_WHITE:
-			setCheck(true);
-			break;
-		case GameState::CHECK_BLACK:
-			setCheck(true);
-			break;
-		case GameState::CHECKMATE_WHITE:
-		case GameState::CHECKMATE_BLACK:
-		case GameState::DEFEAT_WHITE:
-		case GameState::DEFEAT_BLACK:
-			onCheckmate(e);
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 void ChessScene::setCheck(bool check) {
+	auto color = _selectedPiece->getPieceColor();
 	auto oppositeColor = _selectedPiece->getOppositeColor();
 	_isCheck[oppositeColor] = check;
 	_currentTurn = oppositeColor;
+
+	if (check) {
+		std::string str = (color == ChessPiece::Color::BLACK) ? "BLACK" : "WHITE";
+		str += " CHECK";
+
+		if (_checkLabel) {
+			this->removeChild(_checkLabel);
+			_checkLabel->release();
+		}
+		_checkLabel = Label::create(str, "Arial", 24);
+		_checkLabel->setColor(Color3B::RED);
+		auto visibleSize = Director::getInstance()->getVisibleSize();
+		_checkLabel->setPosition(visibleSize * 0.5f);
+		_checkLabel->setScale(ChessUtility::getSpriteScale());
+	
+		this->addChild(_checkLabel);
+	}
 
 	if (_currentTurn == _computer->getColor()) {
 		_waiting = true;
@@ -199,21 +211,28 @@ void ChessScene::setCheck(bool check) {
 					_waiting = false;
 					Rowcol next = _computer->decideMove(_boardLayer, _selectedPiece);
 					movePiece(next); 
-				}),
-				nullptr));
+				}
+			),
+			nullptr)
+		);
 	}
 }
 
-void ChessScene::onCheckmate(GameState state) {
+void ChessScene::onCheckmate(ChessPiece::Color color) {
 	_isGameEnd = true;
 
-	// temp
-	std::string str = (state == GameState::CHECKMATE_BLACK || state == GameState::DEFEAT_BLACK) ? "BLACK CHECKMATE" : "WHITE CHECKMATE";
-	auto label = Label::create(str, "Arial", 24);
-	label->setColor(Color3B::RED);
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	label->setPosition(visibleSize * 0.5f);
-	label->setScale(ChessUtility::getSpriteScale());
+	std::string str = (color == ChessPiece::Color::BLACK) ? "BLACK" : "WHITE";
+	str += " CHECKMATE";
 
-	this->addChild(label);
+	if (_checkLabel) {
+		this->removeChild(_checkLabel);
+		_checkLabel->release();
+	}
+	_checkLabel = Label::create(str, "Arial", 24);
+	_checkLabel->setColor(Color3B::RED);
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	_checkLabel->setPosition(visibleSize * 0.5f);
+	_checkLabel->setScale(ChessUtility::getSpriteScale());
+
+	this->addChild(_checkLabel);
 }

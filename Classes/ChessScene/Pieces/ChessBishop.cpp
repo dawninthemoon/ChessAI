@@ -35,32 +35,25 @@ ChessBishop* ChessBishop::create(const ChessPiece::PieceType type, const ChessPi
 	return bishop;
 }
 
-std::vector<Rowcol> ChessBishop::getMoveAreas(BoardLayer* board, bool throwException)
-{
+std::vector<Rowcol> ChessBishop::getMoveAreas(BoardLayer* board) {
 	std::vector<Rowcol> rowcols;
 
 	bool possible[4];
 	std::fill(possible, possible + 4, true);
 
-	try {
-		for (int i = 1; i < MAX_ROWCOLS; ++i) {
-			for (int j = 0; j < 4; ++j) {
-				if (!possible[j]) continue;
-				Rowcol target = canAddMove(board, dir[j] * i);
-				if (target != Rowcol::IMPOSSIBLE) {
-					rowcols.push_back(target);
-					if (board->getChessPiece(target))
-						possible[j] = false;
-				}
-				else {
+	for (int i = 1; i < MAX_ROWCOLS; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			if (!possible[j]) continue;
+			Rowcol target = canAddMove(board, dir[j] * i);
+			if (target != Rowcol::IMPOSSIBLE) {
+				rowcols.push_back(target);
+				if (board->getChessPiece(target))
 					possible[j] = false;
-				}
+			}
+			else {
+				possible[j] = false;
 			}
 		}
-	}
-	catch (GameState e) {
-		if (throwException)
-			throw e;
 	}
 
 	return rowcols;

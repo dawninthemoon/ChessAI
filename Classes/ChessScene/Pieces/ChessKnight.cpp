@@ -39,21 +39,14 @@ ChessKnight* ChessKnight::create(const ChessPiece::PieceType type, const ChessPi
 	return knight;
 }
 
-std::vector<Rowcol> ChessKnight::getMoveAreas(BoardLayer* board, bool throwException)
-{
+std::vector<Rowcol> ChessKnight::getMoveAreas(BoardLayer* board) {
 	std::vector<Rowcol> rowcols;
 
-	try {
-		for (int i = 0; i < 8; i++) {
-			Rowcol target = canAddMove(board, dir[i]);
-			if (target != Rowcol::IMPOSSIBLE) {
-				rowcols.push_back(target);
-			}
+	for (int i = 0; i < 8; i++) {
+		Rowcol target = canAddMove(board, dir[i]);
+		if (target != Rowcol::IMPOSSIBLE) {
+			rowcols.push_back(target);
 		}
-	}
-	catch (GameState e) {
-		if (throwException)
-			throw e;
 	}
 
 	return rowcols;

@@ -8,10 +8,7 @@ private:
 	Rowcol dir[8];
 public:
 	virtual Rowcol canAddMove(BoardLayer* board, Rowcol additonal) override;
-	Rowcol canAddMoveExceptCheck(BoardLayer* board, Rowcol additonal);
-	virtual bool checkIsCheckState(BoardLayer* board) override;
-	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, bool throwException = false) override;
-	std::vector<Rowcol> getMoveAreasExceptCheck(BoardLayer* board);
+	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board) override;
 public:
 	static ChessKing* create(const ChessPiece::PieceType type, const ChessPiece::Color color);
 	ChessKing();

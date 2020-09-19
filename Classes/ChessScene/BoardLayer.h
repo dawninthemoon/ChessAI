@@ -37,10 +37,9 @@ public:
 
 	int calculateScoreIfMoved(ChessPiece* piece, const Rowcol next);
 	void moveChessPiece(ChessPiece* piece, const Rowcol next);
-	void checkIsCheck(ChessPiece::Color myColor);
+	
 	bool isInCheck(ChessPiece::Color myColor);
 	bool isCheckmate(ChessPiece::Color oppositeColor);
-	bool isKingisStalemated(ChessPiece* king, Rowcol target);
 
 	void createPiece(Rowcol rowcol, ChessPiece::PieceType type, ChessPiece::Color color);
 

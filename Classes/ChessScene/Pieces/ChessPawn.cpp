@@ -32,13 +32,9 @@ Rowcol ChessPawn::canAddDiagonalMove(BoardLayer* board, Rowcol additional) {
 	Rowcol target = getRowcol() + additional;
 
 	auto piece = board->getChessPiece(target);
-	if ((piece != nullptr) &&
-		(piece->getPieceColor() != getPieceColor()) &&
-		(piece->getPieceType() == ChessPiece::KING)) {
-		throw getCheckState(getPieceColor());
-	}
+	if ((piece == nullptr) || (piece->getPieceColor() == getPieceColor())) return Rowcol::IMPOSSIBLE;
 
-	return (piece != nullptr) ? target : Rowcol::IMPOSSIBLE;
+	return target;
 }
 
 void ChessPawn::onMove(const cocos2d::Point point, ChessPiece* toRemove, cocos2d::Node* parent)
@@ -47,7 +43,7 @@ void ChessPawn::onMove(const cocos2d::Point point, ChessPiece* toRemove, cocos2d
 	_isFirstMove = false;
 }
 
-std::vector<Rowcol> ChessPawn::getMoveAreas(BoardLayer* board, bool throwException) {
+std::vector<Rowcol> ChessPawn::getMoveAreas(BoardLayer* board) {
 	std::vector<Rowcol> rowcols;
 
 	Rowcol target = canAddMove(board, Rowcol(1, 0));
@@ -59,31 +55,24 @@ std::vector<Rowcol> ChessPawn::getMoveAreas(BoardLayer* board, bool throwExcepti
 		rowcols.push_back(target);
 	}
 
-	try {
-		target = canAddDiagonalMove(board, Rowcol(1, -1));
-		if (target != Rowcol::IMPOSSIBLE) {
-			rowcols.push_back(target);
-		}
-
-		target = canAddDiagonalMove(board, Rowcol(1, 1));
-		if (target != Rowcol::IMPOSSIBLE) {
-			rowcols.push_back(target);
-		}
+	target = canAddDiagonalMove(board, Rowcol(1, -1));
+	if (target != Rowcol::IMPOSSIBLE) {
+		rowcols.push_back(target);
 	}
-	catch (GameState e) {
-		if (throwException)
-			throw e;
+
+	target = canAddDiagonalMove(board, Rowcol(1, 1));
+	if (target != Rowcol::IMPOSSIBLE) {
+		rowcols.push_back(target);
 	}
 
 	return rowcols;
 }
 
 Rowcol ChessPawn::canAddMove(BoardLayer* board, Rowcol additional) {
-	additional.row *= (getPieceColor() == Color::WHITE) ? -1 : 1;
-	Rowcol target = getRowcol() + additional;
+	Rowcol target = ChessPiece::canAddMove(board, additional);
+	
+	if (target == Rowcol::IMPOSSIBLE) return target;
 
-	if (!board->isValidRowcol(target))
-		return Rowcol::IMPOSSIBLE;
 	if (board->getChessPiece(target))
 		target = Rowcol::IMPOSSIBLE;
 	

@@ -21,23 +21,20 @@ Rowcol ChessPiece::canAddMove(BoardLayer* board, Rowcol additional) {
 
 	ChessPiece* piece = board->getChessPiece(target);
 	if (piece != nullptr) {
-
 		if (piece->getPieceColor() == getPieceColor())
 			return Rowcol::IMPOSSIBLE;
-		if (piece->getPieceType() == ChessPiece::KING)
-			throw getCheckState(getPieceColor());
 	}
 
 	return target;
 }
 
-bool ChessPiece::checkIsCheckState(BoardLayer* board)
-{
-	try {
-		getMoveAreas(board, true);
-	}
-	catch (GameState e) {
-		return true;
+bool ChessPiece::checkIsCheckState(BoardLayer* board) {
+	auto areas = getMoveAreas(board);
+	for (const auto& rc : areas) {
+		auto piece = board->getChessPiece(rc);
+		if ((piece != nullptr) && (piece->getPieceType() == ChessPiece::KING)) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -65,8 +62,7 @@ void ChessPiece::setPieceType(ChessPiece::PieceType type) {
 	_pieceType = type;
 }
 
-void ChessPiece::onMove(const Point target, ChessPiece* toRemove, cocos2d::Node* parent)
-{
+void ChessPiece::onMove(const Point target, ChessPiece* toRemove, cocos2d::Node* parent) {
 	MoveTo* moveTo = MoveTo::create(0.3f, target);
 	CallFunc* callFunc = CallFunc::create([=]() {
 		if (toRemove != nullptr) {
@@ -81,7 +77,6 @@ void ChessPiece::setRowcol(Rowcol rowcol) {
 	_rowcol = rowcol;
 }
 
-Rowcol ChessPiece::getRowcol() const
-{
+Rowcol ChessPiece::getRowcol() const {
 	return _rowcol;
 }

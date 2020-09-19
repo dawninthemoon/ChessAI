@@ -28,7 +28,7 @@ public:
 		COLOR_COUNT
 	};
 public:
-	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, bool throwException = false) = 0;
+	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board) = 0;
 	virtual Rowcol canAddMove(BoardLayer* board, const Rowcol additional);
 	virtual bool checkIsCheckState(BoardLayer* board);
 	ChessPiece::Color getPieceColor() const;

@@ -40,32 +40,25 @@ ChessQueen* ChessQueen::create(const ChessPiece::PieceType type, const ChessPiec
 	return queen;
 }
 
-std::vector<Rowcol> ChessQueen::getMoveAreas(BoardLayer* board, bool throwException)
-{
+std::vector<Rowcol> ChessQueen::getMoveAreas(BoardLayer* board) {
 	std::vector<Rowcol> rowcols;
 
 	bool possible[8];
 	std::fill(possible, possible + 8, true);
 
-	try {
-		for (int i = 1; i < MAX_ROWCOLS; ++i) {
-			for (int j = 0; j < 8; ++j) {
-				if (!possible[j]) continue;
-				Rowcol target = canAddMove(board, dir[j] * i);
-				if (target != Rowcol::IMPOSSIBLE) {
-					rowcols.push_back(target);
-					if (board->getChessPiece(target))
-						possible[j] = false;
-				}
-				else {
+	for (int i = 1; i < MAX_ROWCOLS; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			if (!possible[j]) continue;
+			Rowcol target = canAddMove(board, dir[j] * i);
+			if (target != Rowcol::IMPOSSIBLE) {
+				rowcols.push_back(target);
+				if (board->getChessPiece(target))
 					possible[j] = false;
-				}
+			}
+			else {
+				possible[j] = false;
 			}
 		}
-	}
-	catch (GameState e) {
-		if (throwException)
-			throw e;
 	}
 
 	return rowcols;

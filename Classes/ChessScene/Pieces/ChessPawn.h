@@ -7,7 +7,7 @@ class ChessPawn : public ChessPiece {
 private:
 	bool _isFirstMove;
 public:
-	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board, bool throwException = false) override;
+	virtual std::vector<Rowcol> getMoveAreas(BoardLayer* board) override;
 	virtual Rowcol canAddMove(BoardLayer* board, Rowcol additional) override;
 	Rowcol canAddDiagonalMove(BoardLayer* board, Rowcol additional);
 	virtual void onMove(const cocos2d::Point point, ChessPiece* toRemove, cocos2d::Node* parent) override;

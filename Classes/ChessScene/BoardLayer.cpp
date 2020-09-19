@@ -3,6 +3,7 @@
 #include "RowCol.h"
 #include "ChessScene/Pieces/Pieces.h"
 #include "GameState.h"
+#include <algorithm>
 
 USING_NS_CC;
 
@@ -137,8 +138,7 @@ void BoardLayer::initBoardSize(Size baseSize) {
 	_pixelInterval *= scale;
 }
 
-std::vector<ChessPiece*> BoardLayer::getPiecesByColor(ChessPiece::Color color)
-{
+std::vector<ChessPiece*> BoardLayer::getPiecesByColor(ChessPiece::Color color) {
 	std::vector<ChessPiece*> vec;
 	for (int r = 0; r < MAX_ROWCOLS; ++r) {
 		for (int c = 0; c < MAX_ROWCOLS; ++c) {
@@ -205,21 +205,29 @@ void BoardLayer::createPiece(Rowcol rowcol, ChessPiece::PieceType type, ChessPie
 int BoardLayer::calculateScoreIfMoved(ChessPiece* piece, const Rowcol next) {
 	Rowcol prev = piece->getRowcol();
 	ChessPiece::Color color = piece->getPieceColor();
+	ChessPiece::Color oppositeColor = piece->getOppositeColor();
 
-	ChessPiece* prevTemp = getChessPiece(prev);
 	ChessPiece* nextTemp = getChessPiece(next);
 
 	setChessPiece(nullptr, prev);
 	setChessPiece(piece, next);
-	
+
 	int score = 0;
-	for (int r = 0; r < MAX_ROWCOLS; ++r) {
-		for (int c = 0; c < MAX_ROWCOLS; ++c) {
-			score += ChessUtility::getPieceValue(_board[r][c], color);
+
+	if (isInCheck(color)) {
+		score = std::numeric_limits<int>::max() / 10;
+		if (isCheckmate(oppositeColor))
+			score *= 10;
+	}
+	else {
+		for (int r = 0; r < MAX_ROWCOLS; ++r) {
+			for (int c = 0; c < MAX_ROWCOLS; ++c) {
+				score += ChessUtility::getPieceValue(_board[r][c], color);
+			}
 		}
 	}
 
-	setChessPiece(prevTemp, prev);
+	setChessPiece(piece, prev);
 	setChessPiece(nextTemp, next);
 	
 	return score;
@@ -231,46 +239,10 @@ void BoardLayer::moveChessPiece(ChessPiece* piece, const Rowcol next) {
 	ChessPiece* toRemove = getChessPiece(next);
 	setChessPiece(piece, next);
 	piece->onMove(rowcolToPoint(next), toRemove, this);
-
-	checkIsCheck(piece->getOppositeColor());
-	checkIsCheck(piece->getPieceColor());
 }
 
-void BoardLayer::checkIsCheck(ChessPiece::Color myColor) {
-	bool isCheck = false;
-
-	auto myPieces = getPiecesByColor(myColor);
-	for (const auto& piece : myPieces) {
-		if (piece->checkIsCheckState(this)) {
-			isCheck = true;
-			if (isCheckmate(piece->getOppositeColor())) {
-				throw getCheckmateState(myColor);
-			}
-		}
-	}
-
-	if (isCheck) throw getCheckState(myColor);
-}
-
-bool BoardLayer::isKingisStalemated(ChessPiece* king, Rowcol target)
-{
-	Rowcol prev = king->getRowcol();
-	ChessPiece* temp = getChessPiece(target);
-	bool stalemated = false;
-
-	setChessPiece(nullptr, prev);
-	setChessPiece(king, target);
-
-	stalemated = isInCheck(king->getOppositeColor());
-
-	setChessPiece(king, prev);
-	setChessPiece(temp, target);
-
-	return stalemated;
-}
-
-bool BoardLayer::isInCheck(ChessPiece::Color myColor) {
-	auto pieces = getPiecesByColor(myColor);
+bool BoardLayer::isInCheck(ChessPiece::Color color) {
+	auto pieces = getPiecesByColor(color);
 	for (const auto& piece : pieces) {
 		if (piece->checkIsCheckState(this)) {
 			return true;
@@ -279,9 +251,9 @@ bool BoardLayer::isInCheck(ChessPiece::Color myColor) {
 	return false;
 }
 
-bool BoardLayer::isCheckmate(ChessPiece::Color oppositeColor) {
+bool BoardLayer::isCheckmate(ChessPiece::Color color) {
 	bool isNotCheckmate = false;
-	auto pieces = getPiecesByColor(oppositeColor);
+	auto pieces = getPiecesByColor(color);
 	for (const auto& piece : pieces) {
 		auto moves = piece->getMoveAreas(this);
 		Rowcol prevRc = piece->getRowcol();
@@ -344,7 +316,7 @@ Rowcol BoardLayer::pointToRowcol(cocos2d::Point pos) {
 }
 
 Point BoardLayer::rowcolToPoint(Rowcol rowcol) {
-	float impossible = 9876543.0f;
+	float impossible = std::numeric_limits<float>::max();
 	Point ret = Point(impossible, impossible);
 
 	if (isValidRowcol(rowcol)) {

@@ -3,13 +3,13 @@
 
 #include "cocos2d.h"
 #include "RowCol.h"
+#include "ChessScene/Pieces/ChessPiece.h"
 
 class UILayer;
 class BoardLayer;
 class TimerLayer;
 class ChessPiece;
 class Computer;
-enum class GameState;
 
 class ChessScene : public cocos2d::Scene
 {
@@ -23,6 +23,7 @@ private:
 	TimerLayer* _timerLayer;
 	Rowcol _selectedRowcol;
 	ChessPiece* _selectedPiece;
+	cocos2d::Label* _checkLabel;
 	std::vector<Rowcol> _possibleRowcols;
 	Computer* _computer;
 private:
@@ -35,7 +36,7 @@ private:
 	void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
 	
 	void setCheck(bool check);
-	void onCheckmate(GameState state);
+	void onCheckmate(ChessPiece::Color color);
 
 	void showPossibleRowcols(const Rowcol& rowcol);
 	bool tryMovePiece(const Rowcol& next);
