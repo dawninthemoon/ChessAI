@@ -35,7 +35,7 @@ public:
 	ChessPiece* getChessPiece(const Rowcol rowcol) const;
 	ChessPiece* getChessPiece(const int row, const int column) const;
 
-	int calculateScoreIfMoved(ChessPiece* piece, const Rowcol next);
+	int evaluateBoard(ChessPiece::Color color);
 	void moveChessPiece(ChessPiece* piece, const Rowcol next);
 	
 	bool isInCheck(ChessPiece::Color myColor);

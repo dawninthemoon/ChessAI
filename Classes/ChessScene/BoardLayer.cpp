@@ -202,34 +202,15 @@ void BoardLayer::createPiece(Rowcol rowcol, ChessPiece::PieceType type, ChessPie
 	_board[rowcol.row][rowcol.column] = piece;
 }
 
-int BoardLayer::calculateScoreIfMoved(ChessPiece* piece, const Rowcol next) {
-	Rowcol prev = piece->getRowcol();
-	ChessPiece::Color color = piece->getPieceColor();
-	ChessPiece::Color oppositeColor = piece->getOppositeColor();
-
-	ChessPiece* nextTemp = getChessPiece(next);
-
-	setChessPiece(nullptr, prev);
-	setChessPiece(piece, next);
-
+int BoardLayer::evaluateBoard(ChessPiece::Color color) {
 	int score = 0;
-
-	if (isInCheck(color)) {
-		score = std::numeric_limits<int>::max() / 10;
-		if (isCheckmate(oppositeColor))
-			score *= 10;
-	}
-	else {
-		for (int r = 0; r < MAX_ROWCOLS; ++r) {
-			for (int c = 0; c < MAX_ROWCOLS; ++c) {
-				score += ChessUtility::getPieceValue(_board[r][c], color);
-			}
+	for (int r = 0; r < MAX_ROWCOLS; ++r) {
+		for (int c = 0; c < MAX_ROWCOLS; ++c) {
+			if (_board[r][c] == nullptr) continue;
+			int multiply = (color == _board[r][c]->getPieceColor()) ? 1 : -1;
+			score += ChessUtility::getPieceValue(_board[r][c], color) * multiply;
 		}
 	}
-
-	setChessPiece(piece, prev);
-	setChessPiece(nextTemp, next);
-	
 	return score;
 }
 

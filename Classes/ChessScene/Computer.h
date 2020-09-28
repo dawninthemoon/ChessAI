@@ -14,6 +14,7 @@ public:
 	virtual ~Computer();
 public:
 	Rowcol decideMove(BoardLayer* board, ChessPiece*& selectedPiece);
+	int minimax(BoardLayer* board, ChessPiece::Color color, int alpha, int beta, int depth);
 	int getColor() const;
 };
 

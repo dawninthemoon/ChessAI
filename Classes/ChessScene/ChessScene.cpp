@@ -35,8 +35,6 @@ void ChessScene::initData() {
 	_currentTurn = ChessPiece::WHITE;
 	_selectedPiece = nullptr;
 	_selectedRowcol = Rowcol::IMPOSSIBLE;
-	for (int i = 0; i < ChessPiece::COLOR_COUNT; ++i)
-		_isCheck[i] = false;
 	_computer = new Computer();
 }
 
@@ -182,7 +180,6 @@ void ChessScene::movePiece(const Rowcol& next)
 void ChessScene::setCheck(bool check) {
 	auto color = _selectedPiece->getPieceColor();
 	auto oppositeColor = _selectedPiece->getOppositeColor();
-	_isCheck[oppositeColor] = check;
 	_currentTurn = oppositeColor;
 
 	if (check) {
